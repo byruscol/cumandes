@@ -64,7 +64,7 @@ class Grid extends DBManager
                     $Relation["data"][$k]->Name = str_replace("'", "`", $Relation["data"][$k]->Name);
                     $DataArray[] = $Relation["data"][$k]->Id.":".htmlspecialchars($Relation["data"][$k]->Name);
             }
-            
+            //echo $query;
             if($this->type == "Form")
                 $data = $DataArray;
             else
@@ -294,13 +294,14 @@ class Grid extends DBManager
     	foreach ($this->entity["atributes"] as $col => $value){
     		$this->colnames[] = $col;
     		
-    		$hidden = (isset($value['hidden']) && $value['hidden'] == true)? true: false;
+    		$hidden = (isset($value['hidden']) && $value['hidden'] === true)? true: false;
                 $required = ($value['required'])? true: false;
                 $sortable = (isset($value['sortable']) )? $value['sortable']: true;
                 $label = (array_key_exists('label', $value))? $value['label']: $col;
                         
-                if($value["type"])
+                if($value["type"] && $hidden === false)
                     $editable = true;
+                
                 
     		if($hidden){
                     $required = false;
@@ -329,12 +330,13 @@ class Grid extends DBManager
     				'index'=> $col,
     				'align' => 'center',
     				'sortable' => $sortable,
-    				'editable' => (isset($value['editable']) && $value['editable'] == false)? false: true,
+    				'editable' => $editable,
     				'editrules' => array('required' => $required),
     				'formoptions' => $option,
-    				'hidden' => (isset($value['hidden']) && $value['hidden'] === true)? true: false,
+    				'hidden' => $hidden,
     				'classes'=> 'ellipsis'
     		);
+                
                 if(array_key_exists('width', $value)){
                     $model["width"] = $value['width'];
                 }
@@ -352,6 +354,8 @@ class Grid extends DBManager
                 if(array_key_exists('edithidden', $value) && $value['edithidden']){
                         $model["editrules"]["edithidden"] = true;
                 }
+                
+                
                 
                 if((!array_key_exists('readOnly', $value) || !$value['readOnly'])
                     && ($colType == "date")){
@@ -373,7 +377,8 @@ class Grid extends DBManager
                     $rowObjectId = (isset($value['downloadFile']["rowObjectId"]))? $value['downloadFile']["rowObjectId"]:8;
                     $viewParam = (isset($value['downloadFile']["view"]))? $value['downloadFile']["view"] : $this->view;
                     $model["formatter"] = "@function(cellvalue, options, rowObject){"
-                                            ."var icon = '".$this->pluginURL."/images/'+rowObject[".$rowObjectId."];"
+                                            ."var icon = '".$this->pluginURL."/images/'+rowObject[".$rowObjectId."]+'.jpg';"
+                                            . "if(!UrlExists(icon)){ icon = '".$this->pluginURL."/images/file.jpg';}"
                                             . "return '<a title=\"'+cellvalue+'\" href=\"".$this->pluginURL."download.php?controller=".$viewParam."&id='+cellvalue+'\" target=\"_blank\"> <img src=\"'+icon+'\"/> </a>'}@";
                 }    
                                     
@@ -399,8 +404,11 @@ class Grid extends DBManager
                 
     		if($value['readOnly'])
                     $model["editoptions"]["dataInit"] = "@function(element) { jQuery(element).attr('readonly', 'readonly');}@";
-    		
+    		                
     		$j++;
+                /*if($col == 'parentRelationShip')
+                    echo json_encode($model,JSON_UNESCAPED_UNICODE);
+                */
     		$colmodel[] = $model;
     		$model = array();
     	}

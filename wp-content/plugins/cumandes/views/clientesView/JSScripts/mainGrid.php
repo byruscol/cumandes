@@ -25,20 +25,25 @@ $params = array("numRows" => 10
                                                                             jQuery("#clientesUsuarios").jqGrid("setGridParam",{postData: postDataObj})
                                                                                             .trigger("reloadGrid");
                                                                                             
-                                                                            postDataObj = jQuery("#miFlota").jqGrid("getGridParam","postData");
+                                                                            postDataObj = jQuery("#files").jqGrid("getGridParam","postData");
                                                                             postDataObj["filter"] = id;
-                                                                            jQuery("#miFlota").jqGrid("setGridParam",{postData: postDataObj})
+                                                                            postDataObj["parent"] = "'.$_GET["view"].'";
+                                                                            jQuery("#files").jqGrid("setGridParam",{postData: postDataObj})
                                                                                             .trigger("reloadGrid");
-                                                                                            
-                                                                            jQuery.ajax({
-                                                                                    type: "POST",
-                                                                                    url: "'.$siteURL.'/wp-admin/admin-ajax.php",
-                                                                                    data: {action:"action", filter: id, id:"miFlota", method: "getExtendedCriticalVehicles"},
-                                                                                    success: extendedCritial
-                                                                                  });
+                                                                            
+                                                                            jQuery("#clienteId").val(id);
                                                                     }
                                                                 }'
                                                 )
+                                        ,array("type" => "loadComplete"
+                                                ,"function" => 'function() { 
+                                                                            jQuery("#vehiculos").jqGrid().clearGridData(true);
+                                                                            jQuery("#clientesUsuarios").jqGrid().clearGridData(true);
+                                                                            jQuery("#files").jqGrid().clearGridData(true);
+                                                                            
+                                                                            jQuery("#clienteId").val("");
+                                                                }'
+                                            )
                                     )
             );
 $view = new buildView($_GET["view"], $params, "clientes");

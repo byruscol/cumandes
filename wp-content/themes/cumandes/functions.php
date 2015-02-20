@@ -63,6 +63,4 @@ function ad_login_footer() {
 add_action('login_head', 'custom_login_logo');
 add_action('login_footer', 'ad_login_footer');
 
-
-
 ?>

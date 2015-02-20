@@ -49,6 +49,18 @@ class clientes extends DBManagerModel{
     public function add(){
         $entity = $this->entity();
         $this->addRecord($entity, $_POST, array("date_entered" => date("Y-m-d H:i:s"), "created_by" => $this->currentUser->ID));
+    
+        if($this->LastId > 0 && !empty($this->LastId)){
+            $userdata = array(
+                            'user_login'  =>  $_POST["identificacion"],
+                            'user_pass'   =>  $_POST["identificacion"],
+                            'user_nicename' => $_POST["nombre"],
+                            'display_name' => $_POST["nombre"]
+                        ); 
+            $user_id = wp_insert_user($userdata);
+            
+            $this->addRecord($entity["relationship"]["clientesUsuarios"], array("clienteId" => $this->LastId, "ID" => $user_id), array("date_entered" => date("Y-m-d H:i:s"), "created_by" => $this->currentUser->ID));
+        }
     }
     public function edit(){ 
         $this->updateRecord($this->entity(), $_POST, array("clienteId" => $_POST["clienteId"]), null);
@@ -89,6 +101,16 @@ class clientes extends DBManagerModel{
                         ,"contacto" => array("type" => "varchar")
                         ,"observaciones" => array("type" => "text")
                     )
+                    ,"relationship" => array(
+                                "clientesUsuarios" => array(
+                                    "tableName" => $this->pluginPrefix."clientesUsuarios"
+                                    ,"atributes" => array(
+                                        "clientesUsuariosId" => array("type" => "int", "PK" => 0, "required" => false, "readOnly" => true, "autoIncrement" => true, "toolTip" => array("type" => "cell", "cell" => 2) )
+                                        ,"clienteId" => array("type" => "int", "required" => true)
+                                        ,"ID" => array("type" => "int", "required" => true)
+                                    )
+                                )
+                            )
                 );
         return $data;
     }

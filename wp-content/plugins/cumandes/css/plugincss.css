@@ -152,7 +152,7 @@ button, input, optgroup, select, textarea {
     font-size: 16px;
 }
 
-.ellipsis img {
+#miFlota td.ellipsis img {
     height: auto;
     width: 140px;
 }

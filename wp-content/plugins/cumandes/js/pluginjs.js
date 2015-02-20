@@ -14,7 +14,7 @@ function setTextAreaForm(form, id){
     $data = $tr.children("td.DataTD");
     $data.attr("colspan", "3");
     $data.children("textarea").css("width", "100%");
-    var textAreaId = $data.children("textarea").attr('id')
+    var textAreaId = $data.children("textarea").attr('id');
     tinymce.editors = new Array();
     jQuery('#'+textAreaId).tinymce({
         mode : "none",
@@ -186,3 +186,16 @@ jQuery(window).load(function() {
             slideshow: false
     });
 });
+
+function UrlExists(url) { 
+    var http = new XMLHttpRequest(); 
+    var exists = false;
+    http.open('HEAD', url, false); 
+    http.send(); 
+    if (http.readyState === 4){ 
+        if(http.status == 200)
+            exists = true;
+    }
+
+    return exists;
+}

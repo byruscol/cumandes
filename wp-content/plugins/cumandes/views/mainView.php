@@ -46,19 +46,55 @@ function muestras() {
     global $resource;
     require_once($viewFile);
 }
-
-
-class laFlota_Shortcode {
+    
+class WPcustomized {
         static $add_script;
 
         static function init() {
-                add_shortcode('laFlota_Shortcode', array(__CLASS__, 'handle_shortcode'));
+                //add_shortcode('laFlota_Shortcode', array(__CLASS__, 'handle_shortcode'));
+                add_action('admin_menu',array(__CLASS__, 'wp_hide_update'));
+                add_action('wp_dashboard_setup', array(__CLASS__, 'dashboard_widgets') );
+                 add_action('admin_head', array(__CLASS__, 'custom_logo'));
                 if(!is_admin()){
                     add_action('init', array(__CLASS__, 'register_script'));
                     add_action('wp_footer', array(__CLASS__, 'print_script'));
                 }
         }
+       
+        static function custom_logo() {
+           echo '<style type="text/css">
+                        #wp-admin-bar-wp-logo{display:none;}
+                        #header-logo { background-image: url('.get_bloginfo('template_directory').'/images/logo-c-small.png) !important; }'
+                   . '</style>';
+        }
+        static function wp_hide_update(){
+            global $current_user;
+            get_currentuserinfo();
 
+            if ($current_user->ID != 1) { // solo el admin lo ve, cambia el ID de usuario si no es el 1 o añade todso los IDs de admin
+                remove_action( 'admin_notices', 'update_nag', 3 );
+            }
+        }
+
+        static function dashboard_widgets(){
+            global $wp_meta_boxes;
+            global $wp_filter;
+            
+            unset ($wp_filter['welcome_panel']);
+            
+            remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
+            remove_meta_box( 'dashboard_recent_drafts', 'dashboard', 'side' );
+            remove_meta_box( 'dashboard_primary', 'dashboard', 'side' );
+            remove_meta_box( 'dashboard_secondary', 'dashboard', 'side' );
+            remove_meta_box( 'dashboard_incoming_links', 'dashboard', 'normal' );
+            remove_meta_box( 'dashboard_recent_comments', 'dashboard', 'normal' );
+            remove_meta_box( 'dashboard_right_now', 'dashboard', 'normal' );
+            remove_meta_box( 'dashboard_plugins', 'dashboard', 'normal' );
+            remove_meta_box( 'dashboard_browser_nag', 'dashboard', 'normal' );
+            remove_meta_box( 'dashboard_activity', 'dashboard', 'normal' );
+            
+        }
+        
         static function handle_shortcode($atts) {
                 
                 global $resource;
@@ -77,7 +113,7 @@ class laFlota_Shortcode {
 
         static function register_script() {
 
-                if ( is_user_logged_in() ){
+                /*if ( is_user_logged_in() ){
                     wp_register_style( 'bootstrapResponsiveCss', plugins_url('../css/bootstrap-responsive.min.css', __FILE__));
                     wp_enqueue_style( 'bootstrapResponsiveCss' );
                     wp_register_style( 'bootstrapThemeCss', plugins_url('../css/bootstrap-theme.min.css', __FILE__));
@@ -111,22 +147,22 @@ class laFlota_Shortcode {
                     wp_register_script('myFleet', plugins_url('miFlotaUserView/JSScripts/myFleet.php', __FILE__), array('jquery'), '1.0', true);
                     wp_enqueue_script('myFleet');
                 
-                }
+                }*/
 
         }
 
         static function print_script() {
                 if ( ! self::$add_script )
                         return;
-                if ( is_user_logged_in() ){
+                /*if ( is_user_logged_in() ){
                     wp_print_scripts('myFleet');
                     wp_print_scripts('jqGridLocale_es'); 
                     wp_print_scripts('jqGrid');
                     wp_print_scripts('pluginjs');
                     wp_print_scripts('jquery-u');
-                }
+                }*/
         }
 }
-laFlota_Shortcode::init();
+WPcustomized::init();
 
 ?>

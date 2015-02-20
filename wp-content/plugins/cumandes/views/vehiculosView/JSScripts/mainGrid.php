@@ -6,14 +6,23 @@ $params["actions"] = array(
                             array("type" => "onSelectRow"
                                       ,"function" => 'function(id) {
                                                         if(id != null) {
-                                                                postDataObj = jQuery("#extensiones").jqGrid("getGridParam","postData");
+                                                                postDataObj = jQuery("#files").jqGrid("getGridParam","postData");
                                                                 postDataObj["filter"] = id;
                                                                 postDataObj["parent"] = "'.$_GET["view"].'";
-                                                                jQuery("#extensiones").jqGrid("setGridParam",{postData: postDataObj})
+                                                                jQuery("#files").jqGrid("setGridParam",{postData: postDataObj})
                                                                                 .trigger("reloadGrid");
+
+                                                                jQuery("#vehiculoId").val(id);
                                                         }
                                                     }'
                                     )
+                            ,array("type" => "loadComplete"
+                                                ,"function" => 'function() { 
+                                                                            jQuery("#files").jqGrid().clearGridData(true);
+                                                                            
+                                                                            jQuery("#vehiculoId").val("");
+                                                                }'
+                                            )
                         );
 $view = new buildView("vehiculos", $params, "vehiculos");
 ?>
