@@ -53,12 +53,11 @@ class WPcustomized {
         static function init() {
                 //add_shortcode('laFlota_Shortcode', array(__CLASS__, 'handle_shortcode'));
                 add_action('admin_menu',array(__CLASS__, 'wp_hide_update'));
-                add_action('wp_dashboard_setup', array(__CLASS__, 'dashboard_widgets') );
-                 add_action('admin_head', array(__CLASS__, 'custom_logo'));
-                if(!is_admin()){
-                    add_action('init', array(__CLASS__, 'register_script'));
-                    add_action('wp_footer', array(__CLASS__, 'print_script'));
-                }
+                add_action('wp_dashboard_setup', array(__CLASS__, 'remove_dashboard_widgets') );
+                add_action('wp_dashboard_setup', array(__CLASS__, 'custom_dashboard_widgets'));
+                add_action('admin_head', array(__CLASS__, 'custom_logo'));
+
+                add_action('admin_head', array(__CLASS__, 'register_script'));
         }
        
         static function custom_logo() {
@@ -71,12 +70,24 @@ class WPcustomized {
             global $current_user;
             get_currentuserinfo();
 
-            if ($current_user->ID != 1) { // solo el admin lo ve, cambia el ID de usuario si no es el 1 o añade todso los IDs de admin
+            if ($current_user->data->ID != 1) { // solo el admin lo ve, cambia el ID de usuario si no es el 1 o añade todso los IDs de admin
                 remove_action( 'admin_notices', 'update_nag', 3 );
             }
         }
+        
+        static function customerFiles_dashboard_widget_function() {
+            $template =  file_get_contents(__DIR__."/dashBoardView/clientesFilesView.php");
+                
+            echo $template;
+        }
 
-        static function dashboard_widgets(){
+        static function custom_dashboard_widgets(){
+            global $wp_meta_boxes;
+            wp_add_dashboard_widget('customerFiles_dashboard_widget', 'Archivos de interés', array(__CLASS__, 'customerFiles_dashboard_widget_function'));
+
+        }
+        
+        static function remove_dashboard_widgets(){
             global $wp_meta_boxes;
             global $wp_filter;
             
@@ -113,8 +124,11 @@ class WPcustomized {
 
         static function register_script() {
 
-                /*if ( is_user_logged_in() ){
-                    wp_register_style( 'bootstrapResponsiveCss', plugins_url('../css/bootstrap-responsive.min.css', __FILE__));
+                if ( is_user_logged_in() ){
+                    wp_register_script('clienteFiles', plugins_url('../views/dashBoardView/JSScripts/filesGrid.php', __FILE__), array('jquery'), '1.0', true);
+                    wp_enqueue_script('clienteFiles');
+                    
+                    /*wp_register_style( 'bootstrapResponsiveCss', plugins_url('../css/bootstrap-responsive.min.css', __FILE__));
                     wp_enqueue_style( 'bootstrapResponsiveCss' );
                     wp_register_style( 'bootstrapThemeCss', plugins_url('../css/bootstrap-theme.min.css', __FILE__));
                     wp_enqueue_style( 'bootstrapThemeCss' );
@@ -146,21 +160,21 @@ class WPcustomized {
 
                     wp_register_script('myFleet', plugins_url('miFlotaUserView/JSScripts/myFleet.php', __FILE__), array('jquery'), '1.0', true);
                     wp_enqueue_script('myFleet');
-                
-                }*/
+                    */
+                }
 
         }
 
         static function print_script() {
                 if ( ! self::$add_script )
                         return;
-                /*if ( is_user_logged_in() ){
-                    wp_print_scripts('myFleet');
-                    wp_print_scripts('jqGridLocale_es'); 
+                if ( is_user_logged_in() ){
+                    wp_print_scripts('clienteFiles');
+                    /*wp_print_scripts('jqGridLocale_es'); 
                     wp_print_scripts('jqGrid');
                     wp_print_scripts('pluginjs');
-                    wp_print_scripts('jquery-u');
-                }*/
+                    wp_print_scripts('jquery-u');*/
+                }
         }
 }
 WPcustomized::init();

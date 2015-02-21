@@ -10,8 +10,13 @@ class files extends DBManagerModel{
                 $params["filter"] = 0;
 
         $start = $params["limit"] * $params["page"] - $params["limit"];
-        $query = "SELECT `fileId`, tipoDocumento, `name`, `fileName`,`ext`, `size`, descripcion
-                          , `created`, `display_name` AS created_by
+        
+        if($params["queryType"] == "basic")
+            $cols = "`fileId`, tipoDocumento, `name`, `created`,`ext`";
+        else
+            $cols = "`fileId`, tipoDocumento, `name`, `created`, `ext`, `fileName`, `size`, descripcion, `display_name` AS created_by";
+        
+        $query = "SELECT ".$cols."
                           FROM  `".$this->pluginPrefix."files` n
                                 JOIN ".$this->pluginPrefix."tipoDocumento t ON t.tipoDocumentoId = n.tipoDocumentoId
                                 JOIN ".$this->wpPrefix."users u ON u.ID = n.created_by
@@ -28,15 +33,7 @@ class files extends DBManagerModel{
             
            $query .= " AND (". $this->buildWhere($params["where"]) .")";
         }
-       //echo $query;
         $data = $this->getDataGrid($query, $start, $params["limit"] , $params["sidx"], $params["sord"] );
-        
-        foreach($data["data"] as $key => $value){
-            $data["data"][$key]->icon = "file.jpg";
-            if(is_file($this->pluginPath."/images/".$value->ext.".jpg")){
-                $data["data"][$key]->icon = $value->ext.".jpg";
-            }
-        }
         
         return $data;
     }
@@ -136,11 +133,11 @@ class files extends DBManagerModel{
                         "fileId" => array("type" => "int", "PK" => 0, "required" => false, "readOnly" => true, "autoIncrement" => true, "downloadFile" => array("show" => true, "cellIcon" => 6, "rowObjectId" => 4, "view" => "files") )
                         ,"tipoDocumentoId" => array("label"=>"tipoDocumento","type" => "int", "required" => false )
                         ,"name" => array("label"=>"nombre","type" => "varchar", "required" => true)
-                        ,"fileName" => array("label"=>"fileName","type" => "varchar", "required" => true)
+                        ,"created" => array("label"=>"fecha","type" => "datetime", "required" => false, "readOnly" => true )
                         ,"ext" => array("type" => "varchar", "required" => false, "hidden" => true)
+                        ,"fileName" => array("label"=>"fileName","type" => "varchar", "required" => true)
                         ,"size" => array("type" => "bigint", "required" => false, "hidden" => true)
                         ,"descripcion" => array("label"=>"description","type" => "text", "required" => false, "hidden" => true, "edithidden" => true)
-                        ,"created" => array("label"=>"fecha","type" => "datetime", "required" => false, "readOnly" => true )
                         ,"created_by" => array("type" => "int", "required" => false, "readOnly" => true )
                         ,"icon" => array("type" => "varchar", "required" => false, "hidden" => true, "isTableCol" => false)
                     )
