@@ -263,6 +263,39 @@ button, input, optgroup, select, textarea {
     width: 8000% !important;
 }
 
-#FrmGrid_muestras> table.EditTable > tbody > tr.FormData > td.DataTD > input[type="text"] {
+table.EditTable > tbody > tr.FormData > td.DataTD > input[type="text"] {
     width: 95px !important;
+}
+
+table.ui-jqgrid-htable tr th {
+    background: #FF0000  !important;
+    color: #FFF  !important;
+    text-align: center;
+    border-right: solid 1px #FFF;
+}
+
+table tr.ui-widget-content{
+    border: none;
+    background-color: #ffffff;
+}
+
+table tr.jqgfirstrow td{
+    padding: 0 !important;
+}
+
+.stripingRows{
+    background-color: #ededed;
+    background-image: none;
+}
+
+.ui-jqgrid .ui-jqgrid-pager {
+    height: auto !important;
+}
+
+.ui-jqgrid .ui-pg-input {
+    height: 20px;
+}
+
+.ui-widget-header {
+    background: #000000 Important;
 }

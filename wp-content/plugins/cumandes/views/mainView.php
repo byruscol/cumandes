@@ -55,6 +55,7 @@ class WPcustomized {
                 add_action('admin_menu',array(__CLASS__, 'wp_hide_update'));
                 add_action('wp_dashboard_setup', array(__CLASS__, 'remove_dashboard_widgets') );
                 add_action('wp_dashboard_setup', array(__CLASS__, 'custom_dashboard_widgets'));
+                
                 add_action('admin_head', array(__CLASS__, 'custom_logo'));
 
                 add_action('admin_head', array(__CLASS__, 'register_script'));
@@ -81,10 +82,24 @@ class WPcustomized {
             echo $template;
         }
 
+        static function vehiculos_dashboard_widget_function() {
+            $template =  file_get_contents(__DIR__."/dashBoardView/vehiculosView.php");
+                
+            echo $template;
+        }
+        
+         static function vehiclesFiles_dashboard_widget_function() {
+           $template =  file_get_contents(__DIR__."/dashBoardView/vehiclesFilesView.php");
+                
+           echo $template;
+        }
+        
         static function custom_dashboard_widgets(){
             global $wp_meta_boxes;
-            wp_add_dashboard_widget('customerFiles_dashboard_widget', 'Archivos de interés', array(__CLASS__, 'customerFiles_dashboard_widget_function'));
-
+                       
+            add_meta_box( 'customerFiles_dashboard_widget', 'Archivos de interés', array(__CLASS__, 'customerFiles_dashboard_widget_function'), 'dashboard', 'side', 'high' );
+            add_meta_box( 'vehiculos_dashboard_widget', 'Mi flota de vehículos', array(__CLASS__, 'vehiculos_dashboard_widget_function'), 'dashboard', 'side', 'high' );
+            add_meta_box( 'vehiclesFiles_dashboard_widget', 'Hoja de vida', array(__CLASS__, 'vehiclesFiles_dashboard_widget_function'), 'dashboard', 'side', 'high' );
         }
         
         static function remove_dashboard_widgets(){
@@ -127,6 +142,12 @@ class WPcustomized {
                 if ( is_user_logged_in() ){
                     wp_register_script('clienteFiles', plugins_url('../views/dashBoardView/JSScripts/filesGrid.php', __FILE__), array('jquery'), '1.0', true);
                     wp_enqueue_script('clienteFiles');
+                    
+                    wp_register_script('vehiculos', plugins_url('../views/dashBoardView/JSScripts/vehiculos.php', __FILE__), array('jquery'), '1.0', true);
+                    wp_enqueue_script('vehiculos');
+                    
+                    wp_register_script('vehiclesFiles', plugins_url('../views/dashBoardView/JSScripts/vehiclesFilesGrid.php', __FILE__), array('jquery'), '1.0', true);
+                    wp_enqueue_script('vehiclesFiles');
                     
                     /*wp_register_style( 'bootstrapResponsiveCss', plugins_url('../css/bootstrap-responsive.min.css', __FILE__));
                     wp_enqueue_style( 'bootstrapResponsiveCss' );
@@ -177,6 +198,8 @@ class WPcustomized {
                 }
         }
 }
-WPcustomized::init();
+
+if(substr_count($_SERVER["PHP_SELF"],"index.php") > 0)
+    WPcustomized::init();
 
 ?>

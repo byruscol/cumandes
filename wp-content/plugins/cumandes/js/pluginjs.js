@@ -199,3 +199,7 @@ function UrlExists(url) {
 
     return exists;
 }
+
+jQuery(document).ready(function(){
+    jQuery(".ui-jqgrid-titlebar").hide();
+});

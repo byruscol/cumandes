@@ -79,7 +79,7 @@ class mainController //extends resources
         wp_enqueue_style( 'bootstrapResponsiveCss' );
         wp_register_style( 'bootstrapThemeCss', $this->pluginURL . 'css/bootstrap-theme.min.css');
         wp_enqueue_style( 'bootstrapThemeCss' );
-        wp_register_style( 'uiCss', $this->pluginURL . 'css/jqGrid/themes/ui-lightness/jquery-ui.min.css');
+        wp_register_style( 'uiCss', $this->pluginURL . 'css/jqGrid/themes/black-tie/jquery-ui.min.css');
         wp_enqueue_style( 'uiCss' );
         wp_register_style( 'gridCss', $this->pluginURL . 'css/jqGrid/ui.jqgrid.css');
         wp_enqueue_style( 'gridCss' );

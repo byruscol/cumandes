@@ -16,6 +16,8 @@ class Grid extends DBManager
     protected $model;
     protected $entity;
     protected $loc;
+    protected $gridId;
+    protected $pagerId;
     public $ValidateEdit = false;
     public $view;
     public $validateFileSize = false;
@@ -31,6 +33,10 @@ class Grid extends DBManager
             $this->params = $p;
             $this->loc = $resource;
             $this->type = $y;
+            
+            $this->gridId = (array_key_exists('gridId', $this->params))?$this->params["gridId"]:$this->view;
+            $this->pagerId = (array_key_exists('pagerId', $this->params))?$this->params["pagerId"]:$this->view;
+            
             $this->params["sortorder"] = (array_key_exists('sortorder', $this->params) )?$this->params["sortorder"]:"asc";
             parent::__construct();
             if($type == "table"){
@@ -499,7 +505,7 @@ class Grid extends DBManager
                                                         .addClass("ui-state-disabled");';
         
         $grid = 'jQuery(document).ready(function($){
-                    $grid = jQuery("#' . $this->view . '"),
+                    $grid = jQuery("#' . $this->gridId . '"),
                                     initDateEdit = function (elem) {
                                             setTimeout(function () {
                                                     jQuery(elem).datepicker({
@@ -529,7 +535,7 @@ class Grid extends DBManager
                                     colModel:'.$this->ColModel.',
                                     rowNum:'. $this->params["numRows"].',
                                     rowList: ['. $this->params["numRows"] .', '. ($this->params["numRows"] * 2) .', '. ($this->params["numRows"] * 3) .', "All"],
-                                    pager: "#' . $this->view . 'Pager",						
+                                    pager: "#' . $this->pagerId . 'Pager",						
                                     sortname: "'. $this->params["sortname"].'",
                                     viewrecords: true,
                                     sortorder: "'. $this->params["sortorder"].'",

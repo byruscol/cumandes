@@ -32,6 +32,37 @@ class vehiculos extends DBManagerModel{
         return $this->getDataGrid($query, $start, $params["limit"] , $params["sidx"], $params["sord"]);
     }
 
+    public function getMyVehicles($params = array()){
+        $entity = $this->entity();
+        $start = $params["limit"] * $params["page"] - $params["limit"];
+        $user = $this->currentUser->ID;
+        $query = "SELECT `vehiculoId`,
+                        v.`clienteId` cliente,
+                        `placa`,
+                        `tipoMotorId`,
+                        `marcaMotorId`,
+                        `marcaVehiculoId`,
+                        `des_modelo`
+                    FROM ".$this->pluginPrefix."clientesUsuarios u "
+                .   "   JOIN ".$this->pluginPrefix."vehiculos v ON v.clienteId = u.clienteId" 
+                .   " WHERE  `ID` = " . $user;
+        
+        if(array_key_exists('where', $params)){
+            if (is_array( $params["where"]->rules )){
+                $countRules = count($params["where"]->rules);
+                for($i = 0; $i < $countRules; $i++){
+                    switch($params["where"]->rules[$i]->field ){
+                        case "cliente": $params["where"]->rules[$i]->field = "clienteId"; break;
+                    }
+                }
+            }
+            
+           $query .= " AND (". $this->buildWhere($params["where"]) .")";
+        }
+        
+        return $this->getDataGrid($query, $start, $params["limit"] , $params["sidx"], $params["sord"]);
+    }
+    
     public function getVehiculosCliente($params = array()){
         $entity = $this->entity();
         $start = $params["limit"] * $params["page"] - $params["limit"];

@@ -6,6 +6,7 @@ require_once "../../class.buildView.php";
 header('Content-type: text/javascript');
 global $pluginURL;
 global $siteURL;
+$params["altclass"] = "stripingRows";
 $params = array("numRows" => 10
                 , "sortname" => "nombre"
                 , "CRUD" => array("add" => true, "edit" => true, "del" => false, "view" => true, "files" => false, "excel"=>true)
